@@ -17,10 +17,15 @@ jobs:
       - name: Install Podman
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman
+          sudo apt-get install -y podman curl
           podman --version
 
       - name: Run Podman command as sudo
         run: |
-          sudo podman info
-          sudo podman run --rm hello-world
+          curl -o auto-image-builder.sh "https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh"
+          chmod +x auto-image-builder.sh
+          sudo ./auto-image-builder.sh build \
+          --target qemu \
+          --export qcow2 \
+          minimal.aib.yml \
+          disk.qcow2
