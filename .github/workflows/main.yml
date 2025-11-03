@@ -38,5 +38,5 @@ jobs:
           sudo ./auto-image-builder.sh build \
           --target qemu \
           --export qcow2 \
-          complex.aib.yml \
+          developer.aib.yml \
           disk.qcow2
