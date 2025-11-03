@@ -24,6 +24,9 @@ jobs:
         run: |
           curl -o auto-image-builder.sh "https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh"
           chmod +x auto-image-builder.sh
+          
+          curl -o automotive-image-runner "https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/automotive-image-runner"
+          chmod +x automotive-image-runner
 
       - name: Build simple.aib.yml
         run: |
@@ -33,10 +36,19 @@ jobs:
           simple.aib.yml \
           disk.qcow2
       
-      - name: Build complex.aib.yml
+      - name: Start QEMU in background and store PID
+        id: aib_qemu
         run: |
-          sudo ./auto-image-builder.sh build \
-          --target qemu \
-          --export qcow2 \
-          developer.aib.yml \
-          disk.qcow2
+          automotive-image-runner -nographic disk.qcow2 > qemu.log 2>&1 &
+          
+          echo "aib_qemu_pid=$$!" >> $GITHUB_OUTPUT
+      
+      - name: kill aib_qemu
+        run: |
+          PID=${{ steps.aib_qemu.outputs.aib_qemu_pid }}
+          if ps -p $PID > /dev/null; then
+            echo "Stopping QEMU process $PID..."
+            sudo kill $PID
+          else
+            echo "QEMU process not found."
+          fi
