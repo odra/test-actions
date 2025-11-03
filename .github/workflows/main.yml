@@ -41,7 +41,7 @@ jobs:
         run: |
           automotive-image-runner -nographic disk.qcow2 > qemu.log 2>&1 &
           
-          echo "aib_qemu_pid=$$!" >> $GITHUB_OUTPUT
+          echo "aib_qemu_pid=$!" >> $GITHUB_OUTPUT
       
       - name: kill aib_qemu
         run: |
