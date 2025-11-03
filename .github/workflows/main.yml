@@ -1,0 +1,26 @@
+name: Run Podman Command
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run-podman:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Podman
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y podman
+          podman --version
+
+      - name: Run Podman command as sudo
+        run: |
+          sudo podman info
+          sudo podman run --rm hello-world
