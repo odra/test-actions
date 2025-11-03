@@ -17,7 +17,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman curl
+          sudo apt-get install -y podman curl qemu-system-x86 qemu-utils
           podman --version
       
       - name: Install auto-image-builder.sh
