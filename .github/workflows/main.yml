@@ -27,5 +27,5 @@ jobs:
           sudo ./auto-image-builder.sh build \
           --target qemu \
           --export qcow2 \
-          minimal.aib.yml \
+          simple.aib.yml \
           disk.qcow2
