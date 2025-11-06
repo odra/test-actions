@@ -35,9 +35,6 @@ jobs:
           --export qcow2 \
           simple.aib.yml \
           disk.qcow2
-          else
-            echo "QEMU process not found."
-          fi
       
       - name: Upload autosd disk image file
         uses: actions/upload-artifact@v4
