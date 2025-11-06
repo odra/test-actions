@@ -1,0 +1,23 @@
+name: AutosSD Test Image
+
+on:
+  workflow_run:
+    workflows: ["Build AutoSD Images"]
+    types:
+      - completed
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download AutoSD Image
+        uses: actions/download-artifact@v4
+        with:
+          name: autosd9-qemu-simple-x86_64.qcow2
+          path: /
+
+      - name: Show downloaded files
+        run: |
+          stat autosd9-qemu-simple-x86_64.qcow2
+          file autosd9-qemu-simple-x86_64.qcow2
