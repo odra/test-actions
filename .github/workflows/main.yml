@@ -17,7 +17,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman curl qemu-system-x86 qemu-utils
+          sudo apt-get install -y podman curl
           podman --version
       
       - name: Install auto-image-builder.sh
@@ -35,20 +35,14 @@ jobs:
           --export qcow2 \
           simple.aib.yml \
           disk.qcow2
-      
-      - name: Start QEMU in background and store PID
-        id: aib_qemu
-        run: |
-          automotive-image-runner -nographic disk.qcow2 > qemu.log 2>&1 &
-          
-          echo "aib_qemu_pid=$!" >> $GITHUB_OUTPUT
-      
-      - name: kill aib_qemu
-        run: |
-          PID=${{ steps.aib_qemu.outputs.aib_qemu_pid }}
-          if ps -p $PID > /dev/null; then
-            echo "Stopping QEMU process $PID..."
-            sudo kill $PID
           else
             echo "QEMU process not found."
           fi
+      
+      - name: Upload autosd disk image file
+        uses: actions/upload-artifact@v4
+        with:
+          name: autosd9-qemu-simple-x86_64.qcow2
+          path: disk.qcow2
+          retention-days: 1
+          if-no-files-found: error
