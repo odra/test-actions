@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-podman:
+  aib.build:
     runs-on: ubuntu-latest
 
     steps:
