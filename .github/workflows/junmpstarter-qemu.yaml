@@ -42,7 +42,7 @@ jobs:
 
       - name: Run VM
         run: |
-          sudo ls -la /dev/vsock
+          sudo ls -la /dev
           echo $PWD
           tree .
           jmp shell --exporter-config jumpstarter/qemu.exporter.yaml < jumpstarter/qemu.cmd.sh
