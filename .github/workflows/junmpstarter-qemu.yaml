@@ -12,7 +12,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman curl qemu-system which createrepo-c pip
+          sudo apt-get install -y podman curl qemu-system which createrepo-c pip socat
 
       - name: Enable KVM group perms
         run: |
@@ -30,3 +30,4 @@ jobs:
         run: |
           ls /dev
           ls /dev/vsock
+          echo test | socat - VSOCK-CONNECT:2:1234
