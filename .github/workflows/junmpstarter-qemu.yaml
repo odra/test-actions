@@ -15,7 +15,8 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman curl qemu-system which createrepo-c pip socat wget tree make git uv
+          sudo apt-get install -y podman curl qemu-system which createrepo-c pip socat wget tree make git
+          pip install uv
       
       - name: Download AutoSD 10 Image
         run: |
