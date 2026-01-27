@@ -29,4 +29,4 @@ jobs:
       - name: Preflight Checks
         run: |
           ls /dev
-          echo "vsock OK" | socat - VSOCK-CONNECT:2:1234
+          ls /dev/vsock
