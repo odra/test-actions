@@ -42,7 +42,6 @@ jobs:
 
       - name: Run VM
         run: |
-          ls -la /dev/vsock
           sudo ls -la /dev/vsock
           echo $PWD
           tree .
