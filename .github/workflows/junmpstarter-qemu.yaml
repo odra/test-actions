@@ -42,3 +42,7 @@ jobs:
           else
             echo "vsock cannot be used"
           fi
+      
+      - name: Run VM
+        run: |
+          jmp shell --exporter-config jumpstarter/qemu.exporter.yaml < jumpstarter/qemu.exporter.yaml
