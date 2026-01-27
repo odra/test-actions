@@ -12,7 +12,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y podman curl qemu-system which createrepo-c pip socat wget
+          sudo apt-get install -y podman curl qemu-system which createrepo-c pip socat wget tree
       
       - name: Download AutoSD 10 Image
         run: |
@@ -45,4 +45,6 @@ jobs:
       
       - name: Run VM
         run: |
+          echo $PWD
+          tree .
           jmp shell --exporter-config jumpstarter/qemu.exporter.yaml < jumpstarter/qemu.cmd.sh
