@@ -36,6 +36,7 @@ jobs:
           git clone -b qemu-test https://github.com/odra/jumpstarter.git
           make -C jumpstarter/python build
           pip install jumpstarter/python/dist/*.whl
+        working-directory: /tmp
       #  run: pip install --extra-index-url https://pkg.jumpstarter.dev/ jumpstarter-all
 
       - name: Run VM
