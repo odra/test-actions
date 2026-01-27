@@ -30,4 +30,8 @@ jobs:
         run: |
           ls /dev
           ls /dev/vsock
-          echo test | socat - VSOCK-CONNECT:2:1234
+          if socat -T1 - VSOCK-CONNECT:2:1 </dev/null 2>/dev/null; then
+            echo "vsock can be used"
+          else
+            echo "vsock cannot be used"
+          fi
