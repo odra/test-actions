@@ -45,7 +45,13 @@ jobs:
           else
             echo "vsock cannot be used"
           fi
-      
+
+          if find /dev/vhost-* -writable -print -quit | grep -q .; then
+            echo "Virtio usable"
+          else
+            echo "Virtio not usable"
+          fi
+
       - name: Run VM
         run: |
           echo $PWD
