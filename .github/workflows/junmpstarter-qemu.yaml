@@ -45,4 +45,4 @@ jobs:
       
       - name: Run VM
         run: |
-          jmp shell --exporter-config jumpstarter/qemu.exporter.yaml < jumpstarter/qemu.exporter.yaml
+          jmp shell --exporter-config jumpstarter/qemu.exporter.yaml < jumpstarter/qemu.cmd.sh
