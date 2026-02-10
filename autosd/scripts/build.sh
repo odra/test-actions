@@ -17,5 +17,5 @@ source ${SCRIPT_DIR}/vars.sh
 source ${SCRIPT_DIR}/aib.sh
 
 aib::build_builder ${AIB_DISTRO}
-aib::build ${AIB_DISTRO} ${AIB_TARGET} ${AIB_MANIFEST} ${AIB_OCI_IMAGE} "--define-file vars.yml --define-file vars-devel.yml"
+aib::build ${AIB_DISTRO} ${AIB_TARGET} ${AIB_MANIFEST} ${AIB_OCI_IMAGE}
 aib::oci_to_disk_image ${AIB_OCI_IMAGE} ${AIB_BUILD_DIR}/${AIB_DISK_IMAGE}
