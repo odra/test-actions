@@ -1,42 +1,46 @@
-name: Build AutoSD Images
+name: "AutoSD: Build and Publish"
 
 on:
+  pull_request:
+    paths:
+      - autosd/**
   workflow_dispatch:
 
 jobs:
-  aib.build:
+  run-steps:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install System Dependencies
+      - name: Install Base Dependencies
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y podman curl
-          podman --version
-      
-      - name: Install auto-image-builder.sh
-        run: |
-          curl -o auto-image-builder.sh "https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh"
-          chmod +x auto-image-builder.sh
-          
-          curl -o automotive-image-runner "https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/automotive-image-runner"
-          chmod +x automotive-image-runner
+          sudo apt update -y
+          sudo apt install -y podman
 
-      - name: Build simple.aib.yml
+      - name: Install AIB container script
         run: |
-          sudo ./auto-image-builder.sh build \
-          --target qemu \
-          --export qcow2 \
-          simple.aib.yml \
-          disk.qcow2
-      
-      - name: Upload autosd disk image file
+          sudo wget -O /usr/bin/aib \
+          https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh?ref_type=heads
+
+          chmod +x /usr/bin/aib
+
+      - name: Build QEMU Image (x86_64)
+        run: |
+          export AIB_LOCAL_CONTAINER_STORAGE=$PWD/_build/containers-storage
+          export AIB_BIN=/usr/bin/aib
+          export AIB_MANIFEST=simple.aib.yml
+
+          mkdir -p $AIB_LOCAL_CONTAINER_STORAGE
+
+          sudo -E bash ./scripts/build.sh 
+
+      - name: Fix build dir permissions
+        run: |
+          sudo chown -R $(id -u):$(id -u) _build/
+
+      - name: Upload QEMU Image
         uses: actions/upload-artifact@v4
         with:
-          name: autosd9-qemu-simple-x86_64.qcow2
-          path: disk.qcow2
-          retention-days: 1
-          if-no-files-found: error
+          name: autosd-simple-x86_64-latest.qcow2
+          path: _build/disk.qcow2
