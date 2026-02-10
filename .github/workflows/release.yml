@@ -1,0 +1,43 @@
+name: Generate Toolchain Tarball
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-toolchain-tarball:
+    name: Generate Toolchain Tarball
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Push tag
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y rpm2cpio cpio curl
+
+      - name: Generate toolchain tarball
+        run: |
+          echo "$(uuidgen)" > uuid.txt
+
+      - name: Delete existing continuous release (if any)
+        run: |
+          gh release delete continuous --yes || true
+          git tag -d continuous || true
+          git push origin :refs/tags/continuous || true
+
+      - name: Upload to continuous release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: continuous
+          name: Continuous Build
+          prerelease: true
+          files: |
+            uuid.txt
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
