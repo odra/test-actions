@@ -23,7 +23,7 @@ jobs:
         run: |
           podman info
 
-      - name: Install AIB container script (old)
+      - name: Install AIB container script
         run: |
          sudo wget -O /usr/bin/aib \
          https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh?ref_type=heads
