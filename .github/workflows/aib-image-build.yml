@@ -35,6 +35,10 @@ jobs:
           export AIB_BIN=/usr/bin/aib
           export AIB_MANIFEST=simple.aib.yml
 
+          echo AIB_LOCAL_CONTAINER_STORAGE=$AIB_LOCAL_CONTAINER_STORAGE
+          echo AIB_BIN=$AIB_BIN
+          echo AIB_MANIFEST=$AIB_MANIFEST
+
           mkdir -p $AIB_LOCAL_CONTAINER_STORAGE
 
           sudo -E bash ./scripts/build.sh 
