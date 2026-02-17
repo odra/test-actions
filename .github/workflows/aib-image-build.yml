@@ -17,19 +17,23 @@ jobs:
       - name: Install Base Dependencies
         run: |
           sudo apt update -y
-          sudo apt install -y podman fuse-overlayfs
-
-      - name: Install AIB container script
+          sudo apt install -y make podman fuse-overlayfs osbuild python3-jsonschema python3-pyyaml
+      
+      - name: Install aib
         run: |
-          sudo wget -O /usr/bin/aib \
-          https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh?ref_type=heads
+          git clone https://gitlab.com/CentOS/automotive/src/automotive-image-builder.git
+          make install -C automotive-image-builder
 
-          sudo chmod +x /usr/bin/aib
+     # - name: Install AIB container script (old)
+     #   run: |
+     #     sudo wget -O /usr/bin/aib \
+     #     https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/raw/main/auto-image-builder.sh?ref_type=heads
+     #     sudo chmod +x /usr/bin/aib
 
       - name: Build QEMU Image (x86_64)
         run: |
-          export AIB_LOCAL_CONTAINER_STORAGE=$PWD/_build/containers-storage
-          export AIB_BIN=/usr/bin/aib
+          #export AIB_LOCAL_CONTAINER_STORAGE=$PWD/_build/containers-storage
+          #export AIB_BIN=/usr/bin/aib
           export AIB_MANIFEST=simple.aib.yml
 
           mkdir -p $AIB_LOCAL_CONTAINER_STORAGE
