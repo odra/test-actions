@@ -54,9 +54,14 @@ jobs:
         run: |
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
+           skopeo copy \
+            docker://ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
+            oci-archive://./_build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci
+
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
-            ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
+            --oci-archive
+            _build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
           done
       - name: Inspect outputs directory
