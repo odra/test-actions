@@ -56,7 +56,7 @@ jobs:
           for aib_target in "${AIB_TARGETS[@]}"; do
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
-            ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${{ matrix.aib_target }}:latest \
+            ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
           done
       - name: Inspect outputs directory
