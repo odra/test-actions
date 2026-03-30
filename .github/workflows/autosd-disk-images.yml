@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-name: "AutoSD: Bootc Target Images"
+name: "AutoSD: Bootc Disk Images"
 
 on:
   workflow_dispatch:
