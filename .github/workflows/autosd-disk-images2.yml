@@ -1,0 +1,73 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+name: "AutoSD: Bootc Disk Images2"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-target-image:
+    strategy:
+      matrix:
+        platform: [x86_64, aarch64]
+        include:
+          - platform: x86_64
+            runner: ubuntu-22.04
+            oci_arch: amd64
+            aib_targets: qemu
+          - platform: aarch64
+            runner: ubuntu-22.04-arm
+            oci_arch: arm64
+            aib_targets: qemu,rpi4
+
+    runs-on: ${{ matrix.runner }}
+    env:
+      AIB_BUILD_CONTAINER_IMAGE: docker://ghcr.io/eclipse-autosd/eclipse-autosd-builder:latest
+      AIB_LOCAL_CONTAINER_STORAGE: ${{ github.workspace }}/_build/containers-storage
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Base Dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y podman tree git python3 pip
+      - name: Podman Info
+        run: podman info
+      - name: Install AIB
+        run: |
+          git clone https://gitlab.com/CentOS/automotive/src/automotive-image-builder.git
+          cd (automotive-image-builder; sudo make install)
+      - name: Prepare Build
+        run: |
+          mkdir -p $PWD/_build/{containers-storage,outputs}
+      - name: Pull Bootc Builder Image
+        run: |
+          podman pull  ${AIB_BUILD_CONTAINER_IMAGE}
+      - name: Check Resources
+        run: |
+          df -h
+          echo '---'
+          free -h
+      - name: Generate Disk Images
+        run: |
+          IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
+          for aib_target in "${AIB_TARGETS[@]}"; do
+            podman pull ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
+
+            aib --verbose to-disk-image \
+            --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
+            --oci-archive \
+            ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
+            _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
+          done
+      - name: Inspect outputs directory
+        run: tree _build/outputs
