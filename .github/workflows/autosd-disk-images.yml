@@ -82,6 +82,8 @@ jobs:
           done
       - name: Debug
         run: |
+          sudo chown -R $(id -u):$(id -u) _build/
+           
           podman run \
           --privileged \
           --rm \
