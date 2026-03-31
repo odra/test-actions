@@ -45,7 +45,8 @@ jobs:
       - name: Install AIB
         run: |
           git clone https://gitlab.com/CentOS/automotive/src/automotive-image-builder.git
-          cd (automotive-image-builder; sudo make install)
+          (cd automotive-image-builder; sudo make install)
+          rm -rf automotive-image-builder/
       - name: Prepare Build
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
