@@ -65,6 +65,7 @@ jobs:
 
             aib --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
+            --user-container \
             --container-storage $HOME/.local/share/containers/storage \
             ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
