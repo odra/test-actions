@@ -91,6 +91,6 @@ jobs:
           -v $PWD/_build/containers-storage:/var/lib/containers/storage \
           quay.io/fedora/fedora:43 \
           /bin/bash -c "dnf install -y podman && podman images"
-        if: failure()
+        if: always()
       - name: Inspect outputs directory
         run: tree _build/outputs
