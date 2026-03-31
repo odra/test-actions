@@ -50,6 +50,17 @@ jobs:
       - name: Prepare Build
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
+      - name: Pull Bootc Builder Image
+        run: |
+          podman run \
+          --privileged \
+          --rm \
+          -it \
+          -v $PWD/_build/containers-storage:/var/lib/containers/storage \
+          quay.io/fedora/fedora:43 \
+          /bin/bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE} && podman images"
+
+          sudo chown -R $(id -u):$(id -u) _build/
       - name: Generate Disk Images
         run: |
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
