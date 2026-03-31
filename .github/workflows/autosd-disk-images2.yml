@@ -51,7 +51,7 @@ jobs:
           mkdir -p $PWD/_build/{containers-storage,outputs}
       - name: Pull Bootc Builder Image
         run: |
-          podman pull  ${AIB_BUILD_CONTAINER_IMAGE}
+          sudo podman pull  ${AIB_BUILD_CONTAINER_IMAGE}
       - name: Check Resources
         run: |
           df -h
@@ -61,7 +61,7 @@ jobs:
         run: |
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
-            podman pull ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
+            sudo podman pull ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
 
             sudo -E aib --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
