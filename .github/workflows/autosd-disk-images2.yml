@@ -63,7 +63,7 @@ jobs:
           for aib_target in "${AIB_TARGETS[@]}"; do
             podman pull ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
 
-            aib --verbose to-disk-image \
+            sudo -E aib --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
             --user-container \
             --container-storage $HOME/.local/share/containers/storage \
