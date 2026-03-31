@@ -63,23 +63,19 @@ jobs:
           sudo chown -R $(id -u):$(id -u) _build/
       - name: Generate Disk Images
         run: |
+          du -h
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
            skopeo copy \
             docker://ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
             oci-archive://$PWD/_build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci
 
-            podman run \
-            --privileged \
-            --rm \
-            -it \
-            -v $PWD/_build/containers-storage:/var/lib/containers/storage \
-            quay.io/fedora/fedora:43 \
-            /bin/bash -c "dnf install -y podman && podman pull ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest && podman images"
-
+            du -h 
+            
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
-            ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
+            --oci-archive \
+            _build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
           done
       - name: Inspect outputs directory
