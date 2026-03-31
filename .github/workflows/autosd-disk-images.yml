@@ -76,8 +76,7 @@ jobs:
             
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
-            --oci-archive \
-            _build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci \
+             ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
           done
       - name: Debug
