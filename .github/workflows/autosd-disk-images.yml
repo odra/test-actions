@@ -61,16 +61,18 @@ jobs:
           /bin/bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE} && podman images"
 
           sudo chown -R $(id -u):$(id -u) _build/
-      - name: Generate Disk Images
+      - name: Check Resources
         run: |
           df -h
+          echo '---'
+          free -h
+      - name: Generate Disk Images
+        run: |
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
            skopeo copy \
             docker://ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
             oci-archive://$PWD/_build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci
-
-            df -h 
             
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
