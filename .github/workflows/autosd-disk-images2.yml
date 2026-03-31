@@ -33,7 +33,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       AIB_BUILD_CONTAINER_IMAGE: docker://ghcr.io/eclipse-autosd/eclipse-autosd-builder:latest
-      AIB_LOCAL_CONTAINER_STORAGE: ${{ github.workspace }}/_build/containers-storage
     steps:
       - uses: actions/checkout@v4
       - name: Install Base Dependencies
