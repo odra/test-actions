@@ -22,11 +22,11 @@ jobs:
         platform: [x86_64, aarch64]
         include:
           - platform: x86_64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             oci_arch: amd64
             aib_targets: qemu
           - platform: aarch64
-            runner: ubuntu-22.04-arm
+            runner: ubuntu-24.04-arm
             oci_arch: arm64
             aib_targets: qemu,rpi4
 
