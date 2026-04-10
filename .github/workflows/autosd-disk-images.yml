@@ -13,14 +13,11 @@
 name: "AutoSD: Bootc Disk Images"
 
 on:
-#  schedule:
-    # 04:00 UTC every Monday
-#    - cron: "0 4 * * 1"
-#  pull_request:
-#    branches:
-#      - main
-#    paths:
-#      - .github/workflows/autosd-bootc-disk-images.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/autosd-bootc-disk-images.yml
   workflow_dispatch:
 
 jobs:
@@ -106,6 +103,7 @@ jobs:
           path: _build/outputs/*
   publish-disk-images:
     needs: build-disk-image
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
       - name: Install System Tools
@@ -123,3 +121,13 @@ jobs:
       - name: Inspect Outputs
         run: |
           tree _build
+      - name: SCP artifacts to download.eclipse.org
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1
+        with:
+          host: projects-storage.eclipse.org
+          username: ${{ secrets.SCP_USERNAME }}
+          key: ${{ secrets.SCP_KEY }}
+          passphrase: ${{ secrets.SCP_PASSPHRASE }}
+          source: "_build/outputs/*"
+          target: "/home/data/httpd/download.eclipse.org/autosd/disk-images/"
+          strip_components: 2
