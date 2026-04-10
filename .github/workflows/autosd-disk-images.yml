@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-target-image:
+  build-disk-image:
     strategy:
       matrix:
         platform: [x86_64, aarch64]
@@ -69,9 +69,15 @@ jobs:
           IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
 
+            if [ "${aib_target}" == 'qemu' ]; then
+              aib_ext=qcow2
+            else
+              aib_ext=img
+            fi
+
             aib_oci_image=ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
             aib_oci_archive=eclipse-autosd-bootc-${aib_target}-latest.oci
-            aib_disk_image=eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
+            aib_disk_image=eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.${aib_ext}
 
             echo from ${aib_oci_image} to ${aib_disk_image}
     
@@ -85,7 +91,34 @@ jobs:
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
             --oci-archive \
             _build/outputs/${aib_oci_archive} \
-            _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
+            _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.${aib_ext}
           done
-      - name: Inspect outputs directory
-        run: tree _build/outputs
+      - name: Inspect and Cleanup outputs directory
+        run:
+          tree _build/outputs
+          rm -f _build/outputs/*.oci
+
+      - name: Store Disk Images
+        uses: actions/upload-artifact@v4
+        with:
+          name: outputs-${{ matrix.platform }}
+          path: _build/outputs/*
+  publish-disk-images:
+    needs: build-disk-image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install System Tools
+        run: |
+          apt update -y
+          apt install -y tree
+      - name: Prepare
+        run: |
+          mkdir -p _build/outputs
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: outputs-*
+          merge-multiple: true
+          path: _build/outputs
+      - name: Inspect Outputs
+        run: |
+          tree _build
