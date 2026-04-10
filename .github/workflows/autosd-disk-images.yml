@@ -58,13 +58,6 @@ jobs:
       - name: Prepare Build
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
-      - name: Fetch Builder Image
-        run: |
-          export CONTAINERS_STORAGE_CONF=$PWD/containers-storage.local.conf
-          
-          skopeo copy \
-          docker://${AIB_BUILD_CONTAINER_IMAGE} \
-          containers-storage:${AIB_BUILD_CONTAINER_IMAGE}
       - name: Debug
         run: |
           podman run \
@@ -72,7 +65,7 @@ jobs:
           -it --rm \
           -v $PWD/_build/containers-storage:/var/lib/containers/storage \
           quay.io/fedora/fedora:43 \
-          bash -c "dnf install -y podman && podman images"
+          bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE}"
       - name: Generate Disk Images
         run: |
           IFS=';' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
