@@ -77,8 +77,9 @@ jobs:
     
             podman run -it --rm \
             -v $PWD/_build/containers-storage:/var/lib/containers/storage \
+            -v $PWD/_build/outputs:/outputs \
             quay.io/containers/skopeo:latest \
-            copy docker://${aib_oci_image} oci-archive://_build/outputs/${aib_oci_archive}
+            copy docker://${aib_oci_image} oci-archive:///outputs/${aib_oci_archive}
 
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
