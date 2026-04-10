@@ -110,8 +110,8 @@ jobs:
     steps:
       - name: Install System Tools
         run: |
-          apt update -y
-          apt install -y tree
+          sudo apt update -y
+          sudo apt install -y tree
       - name: Prepare
         run: |
           mkdir -p _build/outputs
