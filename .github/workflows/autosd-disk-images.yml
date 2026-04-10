@@ -13,6 +13,12 @@
 name: "AutoSD: Bootc Disk Images"
 
 on:
+#  schedule:
+    # 04:00 UTC every Monday
+#    - cron: "0 4 * * 1"
+#  pull_request:
+#    branches:
+#      - main
   workflow_dispatch:
 
 jobs:
@@ -22,13 +28,13 @@ jobs:
         platform: [x86_64, aarch64]
         include:
           - platform: x86_64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             oci_arch: amd64
             aib_targets: qemu
-          - platform: aarch64
-            runner: ubuntu-22.04-arm
-            oci_arch: arm64
-            aib_targets: qemu,rpi4
+         # - platform: aarch64
+         #   runner: ubuntu-24.04-arm
+         #   oci_arch: arm64
+         #   aib_targets: qemu,rpi4
 
     runs-on: ${{ matrix.runner }}
     env:
@@ -50,46 +56,33 @@ jobs:
       - name: Prepare Build
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
-      - name: Pull Bootc Builder Image
+      - name: Fetch Builder Image
+        env:
+          CONTAINERS_STORAGE_CONF: containers-storage.local.conf
         run: |
-          podman run \
-          --privileged \
-          --rm \
-          -it \
-          -v $PWD/_build/containers-storage:/var/lib/containers/storage \
-          quay.io/fedora/fedora:43 \
-          /bin/bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE} ghcr.io/eclipse-autosd/eclipse-autosd-bootc-qemu:latest && podman images"
-
-          sudo chown -R $(id -u):$(id -u) _build/
-      - name: Check Resources
-        run: |
-          df -h
-          echo '---'
-          free -h
+          skopeo copy \
+          docker://${AIB_BUILD_CONTAINER_IMAGE} \
+          containers-storage:${AIB_BUILD_CONTAINER_IMAGE}
       - name: Generate Disk Images
         run: |
-          IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
+          IFS=';' read -ra "${AIB_TARGETS}" <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
-           skopeo copy \
-            docker://ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
-            oci-archive://$PWD/_build/outputs/eclipse-autosd-bootc-${aib_target}-latest.oci
-            
+
+            aib_oci_image=ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
+            aib_oci_archive=eclipse-autosd-bootc-${aib_target}-latest.oci
+            aib_disk_image=eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
+
+            echo from ${aib_oci_image} to ${aib_disk_image}
+    
+            skopeo copy \
+            docker://${aib_oci_image} \
+            oci-archive://$PWD/_build/outputs/${aib_oci_archive}
+
             sudo -E ./auto-image-builder.sh --verbose to-disk-image \
             --build-container ${AIB_BUILD_CONTAINER_IMAGE} \
-             ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest \
+            --oci-archive \
+            _build/outputs/${aib_oci_archive} \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.img
           done
-      - name: Debug
-        run: |
-          sudo chown -R $(id -u):$(id -u) _build/
-           
-          podman run \
-          --privileged \
-          --rm \
-          -it \
-          -v $PWD/_build/containers-storage:/var/lib/containers/storage \
-          quay.io/fedora/fedora:43 \
-          /bin/bash -c "dnf install -y podman && podman images"
-        if: always()
       - name: Inspect outputs directory
         run: tree _build/outputs
