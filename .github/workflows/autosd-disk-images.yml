@@ -59,10 +59,8 @@ jobs:
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
       - name: Fetch Builder Image
-        env:
-          CONTAINERS_STORAGE_CONF: containers-storage.local.conf
         run: |
-          expoort CONTAINERS_STORAGE_CONF=$PWD/containers-storage.local.conf
+          export CONTAINERS_STORAGE_CONF=$PWD/containers-storage.local.conf
           
           skopeo copy \
           docker://${AIB_BUILD_CONTAINER_IMAGE} \
