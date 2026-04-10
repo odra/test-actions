@@ -70,7 +70,7 @@ jobs:
           podman run \
           --privileged \
           -it --rm \
-          -v _build/containers-storage:/var/lib/containers/storage \
+          -v $PWD/_build/containers-storage:/var/lib/containers/storage \
           quay.io/fedora/fedora:43 \
           bash -c 'dnf install -y podman && podman images'
       - name: Generate Disk Images
