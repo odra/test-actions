@@ -27,7 +27,7 @@ jobs:
   build-target-image:
     strategy:
       matrix:
-        platform: [x86_64, aarch64]
+        platform: [x86_64]
         include:
           - platform: x86_64
             runner: ubuntu-24.04
