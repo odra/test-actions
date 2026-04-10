@@ -30,7 +30,7 @@ jobs:
         platform: [x86_64]
         include:
           - platform: x86_64
-            runner: ubuntu-24.04
+            runner: ubuntu-22.04
             oci_arch: amd64
             aib_targets: qemu
          # - platform: aarch64
