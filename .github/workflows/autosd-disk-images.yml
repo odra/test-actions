@@ -66,7 +66,7 @@ jobs:
           copy docker://${AIB_BUILD_CONTAINER_IMAGE} containers-storage:${AIB_BUILD_CONTAINER_IMAGE}
       - name: Generate Disk Images
         run: |
-          IFS=';' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
+          IFS=',' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
           for aib_target in "${AIB_TARGETS[@]}"; do
 
             aib_oci_image=ghcr.io/eclipse-autosd/eclipse-autosd-bootc-${aib_target}:latest
