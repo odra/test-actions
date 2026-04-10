@@ -63,7 +63,7 @@ jobs:
           podman run -it --rm \
           -v $PWD/_build/containers-storage:/var/lib/containers/storage \
           quay.io/containers/skopeo:latest \
-          bash -c "skopeo copy docker://${AIB_BUILD_CONTAINER_IMAGE} containers-storage:${AIB_BUILD_CONTAINER_IMAGE}"
+          copy docker://${AIB_BUILD_CONTAINER_IMAGE} containers-storage:${AIB_BUILD_CONTAINER_IMAGE}
       - name: Generate Disk Images
         run: |
           IFS=';' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
