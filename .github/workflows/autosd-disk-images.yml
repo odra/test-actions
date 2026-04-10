@@ -62,7 +62,9 @@ jobs:
         env:
           CONTAINERS_STORAGE_CONF: containers-storage.local.conf
         run: |
-          CONTAINERS_STORAGE_CONF=$PWD/containers-storage.local.conf  skopeo copy \
+          expoort CONTAINERS_STORAGE_CONF=$PWD/containers-storage.local.conf
+          
+          skopeo copy \
           docker://${AIB_BUILD_CONTAINER_IMAGE} \
           containers-storage:${AIB_BUILD_CONTAINER_IMAGE}
       - name: Debug
