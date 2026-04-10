@@ -92,11 +92,12 @@ jobs:
             --oci-archive \
             _build/outputs/${aib_oci_archive} \
             _build/outputs/eclipse-autosd-bootc-${aib_target}-${{ matrix.platform }}.${aib_ext}
+
+            rm -f _build/outputs/${aib_oci_archive}
           done
       - name: Inspect and Cleanup outputs directory
         run:
           tree _build/outputs
-          rm -f _build/outputs/*.oci
 
       - name: Store Disk Images
         uses: actions/upload-artifact@v4
