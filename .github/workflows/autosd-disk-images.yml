@@ -72,7 +72,7 @@ jobs:
           -it --rm \
           -v $PWD/_build/containers-storage:/var/lib/containers/storage \
           quay.io/fedora/fedora:43 \
-          bash -c 'dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE}'
+          bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE}"
       - name: Generate Disk Images
         run: |
           IFS=';' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
