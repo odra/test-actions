@@ -27,10 +27,10 @@ jobs:
   build-target-image:
     strategy:
       matrix:
-        platform: [x86_64]
+        platform: [x86_64, aarch64]
         include:
           - platform: x86_64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             oci_arch: amd64
             aib_targets: qemu
          # - platform: aarch64
@@ -58,14 +58,12 @@ jobs:
       - name: Prepare Build
         run: |
           mkdir -p $PWD/_build/{containers-storage,outputs}
-      - name: Debug
+      - name: Fetch Builder Image
         run: |
-          podman run \
-          --privileged \
-          -it --rm \
+          podman run -it --rm \
           -v $PWD/_build/containers-storage:/var/lib/containers/storage \
-          quay.io/fedora/fedora:43 \
-          bash -c "dnf install -y podman && podman pull ${AIB_BUILD_CONTAINER_IMAGE}"
+          quay.io/containers/skopeo:latest \
+          bash -c "skopeo copy docker://${AIB_BUILD_CONTAINER_IMAGE} containers-storage:${AIB_BUILD_CONTAINER_IMAGE}"
       - name: Generate Disk Images
         run: |
           IFS=';' read -ra AIB_TARGETS <<< "${{matrix.aib_targets}}"
